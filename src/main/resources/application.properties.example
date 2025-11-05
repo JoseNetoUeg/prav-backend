@@ -1,0 +1,12 @@
+spring.datasource.url=jdbc:postgresql://localhost:5432/pravdb
+spring.datasource.username=YOUR_DB_USER
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+
+# Notes:
+# - Do NOT commit real credentials. Keep them in src/main/resources/application.properties locally
+#   (this file is in .gitignore) or set via environment variables.
