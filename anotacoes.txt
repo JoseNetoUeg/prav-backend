@@ -1,0 +1,77 @@
+
+1 - comando Registrar um usuário
+
+$body = @{ email='cicrano@example.com'; senha='Senha123'; nome='Cicrano' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri http://localhost:8080/auth/register -Body $body -ContentType 'application/json'
+
+
+2 - comando Fazer login (se quiser testar separadamente)
+
+$body = @{ email='user@example.com'; senha='Senha123' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri http://localhost:8080/auth/login -Body $body -ContentType 'application/json'
+
+
+3 - Usar o token para acessar endpoint protegido (listar serviços)
+
+$token = '123456'
+Invoke-RestMethod -Method Get -Uri http://localhost:8080/cservico/servico -Headers @{ Authorization = "Bearer $token" }
+
+
+
+
+4 - Decodificar token localmente (ver iat/exp e claims)
+Cole o token completo em $token e rode:
+
+$token = '$2a$10$II5WFIK1iYqv2Jgj5JgQAOoDbucmQlyvFLEZD/pmZTE.4hyri5Qli'
+$parts = $token -split '\.'
+$decode = {
+    param($s)
+    $s = $s.Replace('-','+').Replace('_','/')
+    switch ($s.Length % 4) {
+        2 { $s += '==' }
+        3 { $s += '=' }
+        default {}
+    }
+    [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($s))
+}
+$header = & $decode $parts[0]
+$payload = & $decode $parts[1]
+$payloadObj = $payload | ConvertFrom-Json
+$iat = [DateTime]::UnixEpoch.AddSeconds([double]$payloadObj.iat).ToLocalTime()
+$exp = [DateTime]::UnixEpoch.AddSeconds([double]$payloadObj.exp).ToLocalTime()
+$header; $payload; "Issued at: $iat"; "Expires: $exp"
+
+
+
+$token = '$2a$10$II5WFIK1iYqv2Jgj5JgQAOoDbucmQlyvFLEZD/pmZTE.4hyri5Qli'
+$response = Invoke-RestMethod -Method Get -Uri http://localhost:8080/cservico/servico -Headers @{ Authorization = "Bearer $token" }
+$response | ConvertTo-Json -Depth 5
+
+$token = '$2a$10$yd3zJugm9EFCWm9sxJqRTupy1Q/u3ybCkQPBA6lgMPpx5FqjTHKsO'
+$response = Invoke-RestMethod -Method Get -Uri http://localhost:8080/cservico/servico -Headers @{ Authorization = "Bearer $token" }
+$response | ConvertTo-Json -Depth 5
+
+
+1 - Fazer login e ver o JSON de resposta (vai trazer token)
+
+$body = @{ email='user@example.com'; senha='Senha123' } | ConvertTo-Json
+$login = Invoke-RestMethod -Method Post -Uri http://localhost:8080/auth/login -Body $body -ContentType 'application/json'
+$login | Format-List
+
+A saída deve mostrar algo como:
+token : eyJhbGciOiJ...
+email : user@example.com
+
+2 - Colocar o token na variável e chamar o endpoint protegido (lista a tabela servico)
+$token = $login.token
+$response = Invoke-RestMethod -Method Get -Uri http://localhost:8080/cservico/servico -Headers @{ Authorization = "Bearer $token" }
+$response | ConvertTo-Json -Depth 5
+
+ 3 - testar rapidamente com curl-like (conteúdo cru)(lista tabela desorganizada)
+(Invoke-WebRequest -Uri http://localhost:8080/cservico/servico -Headers @{ Authorization = "Bearer $token" }).Content
+
+
+4 - Verificar no banco (opcional) se o usuário existe / ver o hash salvo (útil para debug)
+psql -U postgres -d pravdb -c "SELECT id, email, nome FROM usuario;"
+# para ver também a senha(hashed)
+psql -U postgres -d pravdb -c "SELECT id, email, senha FROM usuario;"

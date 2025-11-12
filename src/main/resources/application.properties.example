@@ -10,3 +10,9 @@ spring.jpa.hibernate.ddl-auto=update
 # Notes:
 # - Do NOT commit real credentials. Keep them in src/main/resources/application.properties locally
 #   (this file is in .gitignore) or set via environment variables.
+
+# JWT configuration (used by backend to sign auth tokens)
+# Set a strong random secret in your local `application.properties` or as an environment variable.
+jwt.secret=CHANGE_ME_REPLACE_WITH_RANDOM_32_PLUS_CHARS
+# token expiration in milliseconds (e.g. 3600000 = 1h)
+jwt.expirationMs=3600000
