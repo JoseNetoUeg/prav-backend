@@ -75,3 +75,15 @@ $response | ConvertTo-Json -Depth 5
 psql -U postgres -d pravdb -c "SELECT id, email, nome FROM usuario;"
 # para ver também a senha(hashed)
 psql -U postgres -d pravdb -c "SELECT id, email, senha FROM usuario;"
+
+
+Abriu http://localhost:4200/login
+Email: user@example.com e senha = Senha123.
+
+
+
+
+
+
+
+

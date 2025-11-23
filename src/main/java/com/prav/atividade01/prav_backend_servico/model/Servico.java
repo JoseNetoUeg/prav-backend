@@ -2,6 +2,9 @@ package com.prav.atividade01.prav_backend_servico.model;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +34,7 @@ public class Servico {
 	private double valor;
 	
 	@Column(name="disponivel")
+	@JsonIgnore
 	private boolean disponivel;
 	
 		
@@ -114,5 +118,10 @@ public class Servico {
 
 	public void setDisponivel(boolean disponivel) {
 		this.disponivel = disponivel;
+	}
+
+	@JsonProperty("disponivel")
+	public String getDisponivelTexto() {
+		return this.disponivel ? "sim" : "nao";
 	}
 }
