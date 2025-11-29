@@ -113,6 +113,7 @@ public class OrdemController {
                 idto.setPrecoUnitario(i.getPrecoUnitario());
                 idto.setSubtotal(i.getSubtotal());
                 idto.setServicoId(i.getServico() != null ? i.getServico().getCodigo() : null);
+                idto.setServicoNome(i.getServico() != null ? i.getServico().getTipoServico() : null);
                 return idto;
             }).collect(Collectors.toList()));
         }

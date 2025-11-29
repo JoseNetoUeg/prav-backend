@@ -6,6 +6,7 @@ public class OrdemItemDto {
     private Long id;
     private Integer linhaNum;
     private Long servicoId;
+    private String servicoNome;
     private String descricao;
     private BigDecimal quantidade;
     private BigDecimal precoUnitario;
@@ -22,6 +23,9 @@ public class OrdemItemDto {
 
     public Long getServicoId() { return servicoId; }
     public void setServicoId(Long servicoId) { this.servicoId = servicoId; }
+
+    public String getServicoNome() { return servicoNome; }
+    public void setServicoNome(String servicoNome) { this.servicoNome = servicoNome; }
 
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
